@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Task Manager</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6f8;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1f2937;
+      color: white;
+      padding: 25px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #cbd5e1;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 30px auto;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card h3 {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card p {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .controls {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .controls h2 {
+      margin-bottom: 15px;
+    }
+
+    .control-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    input,
+    select,
+    button {
+      padding: 11px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .task-form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .task-form h2 {
+      margin-bottom: 15px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr auto;
+      gap: 10px;
+    }
+
+    .tasks {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .task-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border-left: 5px solid #64748b;
+    }
+
+    .task-card.completed {
+      opacity: 0.7;
+    }
+
+    .task-card.completed h3 {
+      text-decoration: line-through;
+    }
+
+    .task-card h3 {
+      margin-bottom: 12px;
+    }
+
+    .task-info {
+      margin-bottom: 15px;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .high {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .medium {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .low {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .complete-btn {
+      background: #16a34a;
+    }
+
+    .delete-btn {
+      background: #dc2626;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      background: white;
+      padding: 50px;
+      border-radius: 10px;
+      color: #64748b;
+    }
+
+    .section-title {
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .tasks {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .dashboard,
+      .tasks {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Smart Task Manager</h1>
+    <p>A JavaScript Higher-Order Functions Project</p>
+  </header>
+
+  <div class="container">
+
+    <section class="dashboard">
+      <div class="stat-card">
+        <h3>Total Tasks</h3>
+        <p id="totalTasks">0</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Completed</h3>
+        <p id="completedTasks">0</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Pending</h3>
+        <p id="pendingTasks">0</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>Total Hours</h3>
+        <p id="totalHours">0</p>
+      </div>
+    </section>
+
+    <section class="task-form">
+      <h2>Add New Task</h2>
+
+      <form id="taskForm" class="form-grid">
+
+        <input
+          type="text"
+          id="taskTitle"
+          placeholder="Task title"
+          required
+        >
+
+        <select id="taskCategory">
+          <option value="Development">Development</option>
+          <option value="Learning">Learning</option>
+          <option value="Personal">Personal</option>
+          <option value="Work">Work</option>
+        </select>
+
+        <select id="taskPriority">
+          <option value="High">High</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="Low">Low</option>
+        </select>
+
+        <input
+          type="number"
+          id="taskHours"
+          placeholder="Hours"
+          min="1"
+          required
+        >
+
+        <button type="submit">Add Task</button>
+
+      </form>
+    </section>
+
+    <section class="controls">
+
+      <h2>Task Controls</h2>
+
+      <div class="control-row">
+
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search tasks..."
+        >
+
+        <select id="statusFilter">
+          <option value="all">All Tasks</option>
+          <option value="completed">Completed</option>
+          <option value="pending">Pending</option>
+        </select>
+
+        <select id="priorityFilter">
+          <option value="all">All Priorities</option>
+          <option value="High">High Priority</option>
+          <option value="Medium">Medium Priority</option>
+          <option value="Low">Low Priority</option>
+        </select>
+
+        <select id="sortSelect">
+          <option value="default">Default Order</option>
+          <option value="hoursAsc">Hours: Low → High</option>
+          <option value="hoursDesc">Hours: High → Low</option>
+          <option value="priority">Priority</option>
+          <option value="title">Title</option>
+        </select>
+
+      </div>
+
+    </section>
+
+    <h2 class="section-title">My Tasks</h2>
+
+    <section id="taskList" class="tasks"></section>
+
+  </div>
+
+  <script>
+    let tasks = [
+      {
+        id: 1,
+        title: "Build portfolio website",
+        category: "Development",
+        priority: "High",
+        completed: true,
+        hours: 5
+      },
+      {
+        id: 2,
+        title: "Study JavaScript",
+        category: "Learning",
+        priority: "High",
+        completed: false,
+        hours: 3
+      },
+      {
+        id: 3,
+        title: "Create PostgreSQL database",
+        category: "Development",
+        priority: "Medium",
+        completed: true,
+        hours: 4
+      },
+      {
+        id: 4,
+        title: "Read JavaScript documentation",
+        category: "Learning",
+        priority: "Low",
+        completed: false,
+        hours: 2
+      },
+      {
+        id: 5,
+        title: "Fix login bug",
+        category: "Development",
+        priority: "High",
+        completed: false,
+        hours: 6
+      }
+    ];
+
+   
+
+    function processTasks(tasks, operation) {
+      return tasks.map(operation);
+    }
+
+    function filterTasks(tasks, condition) {
+      return tasks.filter(condition);
+    }
+
+    function calculate(tasks, operation, initialValue) {
+      return tasks.reduce(operation, initialValue);
+    }
+
+    function runTaskOperation(tasks, operation) {
+      return operation(tasks);
+    }
+
+   
+
+    function createPriorityFilter(priority) {
+      return function(task) {
+        return task.priority === priority;
+      };
+    }
+
+    
+
+    const getCompletedTasks = tasks =>
+      filterTasks(tasks, task => task.completed);
+
+    const getPendingTasks = tasks =>
+      filterTasks(tasks, task => !task.completed);
+
+    const getTotalHours = tasks =>
+      calculate(
+        tasks,
+        (total, task) => total + task.hours,
+        0
+      );
+
+    
+
+    function renderTasks() {
+
+      const searchText =
+        document.getElementById("searchInput").value
+          .toLowerCase();
+
+      const status =
+        document.getElementById("statusFilter").value;
+
+      const priority =
+        document.getElementById("priorityFilter").value;
+
+      const sortType =
+        document.getElementById("sortSelect").value;
+
+      let displayedTasks = [...tasks];
+
+    
+
+      displayedTasks = displayedTasks.filter(task =>
+        task.title.toLowerCase().includes(searchText)
+      );
+
+
+      if (status === "completed") {
+        displayedTasks = filterTasks(
+          displayedTasks,
+          task => task.completed
+        );
+      }
+
+      if (status === "pending") {
+        displayedTasks = filterTasks(
+          displayedTasks,
+          task => !task.completed
+        );
+      }
+
+      
+
+      if (priority !== "all") {
+
+        const priorityFilter =
+          createPriorityFilter(priority);
+
+        displayedTasks =
+          filterTasks(displayedTasks, priorityFilter);
+      }
+
+     
+
+      if (sortType === "hoursAsc") {
+        displayedTasks.sort(
+          (a, b) => a.hours - b.hours
+        );
+      }
+
+      if (sortType === "hoursDesc") {
+        displayedTasks.sort(
+          (a, b) => b.hours - a.hours
+        );
+      }
+
+      if (sortType === "title") {
+        displayedTasks.sort(
+          (a, b) => a.title.localeCompare(b.title)
+        );
+      }
+
+      if (sortType === "priority") {
+
+        const priorityOrder = {
+          High: 1,
+          Medium: 2,
+          Low: 3
+        };
+
+        displayedTasks.sort(
+          (a, b) =>
+            priorityOrder[a.priority] -
+            priorityOrder[b.priority]
+        );
+      }
+
+      /*
+        map() — convert tasks into HTML
+      */
+
+      const taskHTML = displayedTasks.map(task => {
+
+        return `
+          <article class="task-card ${task.completed ? "completed" : ""}">
+
+            <span class="badge ${task.priority.toLowerCase()}">
+              ${task.priority}
+            </span>
+
+            <h3>${task.title}</h3>
+
+            <div class="task-info">
+              <div>Category: ${task.category}</div>
+              <div>Estimated time: ${task.hours} hour(s)</div>
+              <div>Status: ${task.completed ? "Completed" : "Pending"}</div>
+            </div>
+
+            <div class="task-actions">
+
+              <button
+                class="complete-btn"
+                onclick="toggleTask(${task.id})"
+              >
+                ${task.completed ? "Undo" : "Complete"}
+              </button>
+
+              <button
+                class="delete-btn"
+                onclick="deleteTask(${task.id})"
+              >
+                Delete
+              </button>
+
+            </div>
+
+          </article>
+        `;
+      }).join("");
+
+      const taskList =
+        document.getElementById("taskList");
+
+      if (taskHTML === "") {
+
+        taskList.innerHTML = `
+          <div class="empty">
+            <h3>No tasks found</h3>
+            <p>Try changing your filters or add a new task.</p>
+          </div>
+        `;
+
+      } else {
+
+        taskList.innerHTML = taskHTML;
+      }
+
+      updateDashboard();
+    }
+
+    
+
+    function updateDashboard() {
+
+      const totalTasks = tasks.length;
+
+      const completedTasks =
+        runTaskOperation(
+          tasks,
+          getCompletedTasks
+        );
+
+      const pendingTasks =
+        runTaskOperation(
+          tasks,
+          getPendingTasks
+        );
+
+      const totalHours =
+        runTaskOperation(
+          tasks,
+          getTotalHours
+        );
+
+      document.getElementById("totalTasks").textContent =
+        totalTasks;
+
+      document.getElementById("completedTasks").textContent =
+        completedTasks.length;
+
+      document.getElementById("pendingTasks").textContent =
+        pendingTasks.length;
+
+      document.getElementById("totalHours").textContent =
+        totalHours;
+    }
+
+   
+
+    document
+      .getElementById("taskForm")
+      .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const title =
+          document.getElementById("taskTitle").value;
+
+        const category =
+          document.getElementById("taskCategory").value;
+
+        const priority =
+          document.getElementById("taskPriority").value;
+
+        const hours =
+          Number(
+            document.getElementById("taskHours").value
+          );
+
+        const newTask = {
+          id: Date.now(),
+          title,
+          category,
+          priority,
+          completed: false,
+          hours
+        };
+
+        tasks.push(newTask);
+
+        this.reset();
+
+        renderTasks();
+      });
+
+    
+
+    function toggleTask(id) {
+
+      tasks = tasks.map(task => {
+
+        if (task.id === id) {
+
+          return {
+            ...task,
+            completed: !task.completed
+          };
+
+        }
+
+        return task;
+      });
+
+      renderTasks();
+    }
+
+   
+
+    function deleteTask(id) {
+
+      tasks = tasks.filter(
+        task => task.id !== id
+      );
+
+      renderTasks();
+    }
+
+    
+
+    document
+      .getElementById("searchInput")
+      .addEventListener("input", renderTasks);
+
+    document
+      .getElementById("statusFilter")
+      .addEventListener("change", renderTasks);
+
+    document
+      .getElementById("priorityFilter")
+      .addEventListener("change", renderTasks);
+
+    document
+      .getElementById("sortSelect")
+      .addEventListener("change", renderTasks);
+
+
+
+    renderTasks();
+  </script>
+
+</body>
+</html>
