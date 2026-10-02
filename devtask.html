@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevTask Pro</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --warning: #d97706;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    body.dark {
+      --bg: #111827;
+      --card: #1f2937;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: #374151;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: 0.3s;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: auto;
+    }
+
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      min-height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--primary);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .logo h1 {
+      font-size: 22px;
+    }
+
+    .logo span {
+      color: var(--primary);
+    }
+
+    .theme-btn {
+      border: none;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    main {
+      padding: 35px 0 60px;
+    }
+
+    .welcome {
+      margin-bottom: 30px;
+    }
+
+    .welcome h2 {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      color: var(--muted);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .stat-card h3 {
+      font-size: 28px;
+    }
+
+    .progress-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      transition: width 0.4s ease;
+    }
+
+    .controls {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: var(--shadow);
+    }
+
+    .control-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 13px 15px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 10px;
+      outline: none;
+    }
+
+    select,
+    .add-btn {
+      padding: 13px 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .add-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+
+    .add-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      padding: 9px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .tasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .tasks-header p {
+      color: var(--muted);
+    }
+
+    #taskList {
+      display: grid;
+      gap: 15px;
+    }
+
+    .task-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: 0.2s;
+    }
+
+    .task-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .task-card.completed {
+      opacity: 0.7;
+    }
+
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .task-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .completed .task-title {
+      text-decoration: line-through;
+    }
+
+    .task-description {
+      color: var(--muted);
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .task-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .badge {
+      padding: 5px 9px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .category {
+      background: rgba(79, 70, 229, 0.12);
+      color: var(--primary);
+    }
+
+    .high {
+      background: rgba(220, 38, 38, 0.12);
+      color: var(--danger);
+    }
+
+    .medium {
+      background: rgba(217, 119, 6, 0.12);
+      color: var(--warning);
+    }
+
+    .low {
+      background: rgba(22, 163, 74, 0.12);
+      color: var(--success);
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      border: none;
+      padding: 9px 13px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .complete-btn {
+      background: rgba(22, 163, 74, 0.12);
+      color: var(--success);
+    }
+
+    .delete-btn {
+      background: rgba(220, 38, 38, 0.12);
+      color: var(--danger);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 50px 20px;
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: 15px;
+      color: var(--muted);
+    }
+
+    .empty h3 {
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: none;
+      place-items: center;
+      padding: 20px;
+      z-index: 200;
+    }
+
+    .modal.show {
+      display: grid;
+    }
+
+    .modal-content {
+      width: min(500px, 100%);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close-btn {
+      border: none;
+      background: none;
+      color: var(--muted);
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 9px;
+      outline: none;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 9px;
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 800px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 550px) {
+      .header-content {
+        min-height: 65px;
+      }
+
+      .welcome h2 {
+        font-size: 24px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .task-top {
+        flex-direction: column;
+      }
+
+      .control-row {
+        flex-direction: column;
+      }
+
+      select,
+      .add-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="container header-content">
+
+      <div class="logo">
+        <div class="logo-icon">D</div>
+
+        <div>
+          <h1>DevTask <span>Pro</span></h1>
+        </div>
+      </div>
+
+      <button class="theme-btn" id="themeBtn">
+        🌙 Dark Mode
+      </button>
+
+    </div>
+  </header>
+
+
+  <main class="container">
+
+    <section class="welcome">
+      <h2>Developer Task Dashboard</h2>
+      <p>Organize your development work and track your progress.</p>
+    </section>
+
+
+    <section class="stats">
+
+      <div class="stat-card">
+        <p>Total Tasks</p>
+        <h3 id="totalTasks">0</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>Completed</p>
+        <h3 id="completedTasks">0</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>Pending</p>
+        <h3 id="pendingTasks">0</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>High Priority</p>
+        <h3 id="highPriorityTasks">0</h3>
+      </div>
+
+    </section>
+
+
+    <section class="progress-card">
+
+      <div class="progress-header">
+        <strong>Overall Progress</strong>
+        <span id="progressText">0%</span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+    </section>
+
+
+    <section class="controls">
+
+      <div class="control-row">
+
+        <div class="search-box">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="🔎 Search tasks..."
+          >
+        </div>
+
+        <select id="sortSelect">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="title">Title</option>
+          <option value="priority">Priority</option>
+        </select>
+
+        <button class="add-btn" id="addTaskBtn">
+          + Add Task
+        </button>
+
+      </div>
+
+
+      <div class="filters">
+
+        <button class="filter-btn active" data-filter="all">
+          All
+        </button>
+
+        <button class="filter-btn" data-filter="pending">
+          Pending
+        </button>
+
+        <button class="filter-btn" data-filter="completed">
+          Completed
+        </button>
+
+        <button class="filter-btn" data-filter="high">
+          High Priority
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section>
+
+      <div class="tasks-header">
+        <div>
+          <h2>Your Tasks</h2>
+          <p id="taskCount">0 tasks</p>
+        </div>
+      </div>
+
+      <div id="taskList"></div>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    <p>DevTask Pro-Built with HTML, CSS & JavaScript by Dev Josh</p>
+  </footer>
+
+
+  <div class="modal" id="taskModal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h2>Create New Task</h2>
+
+        <button class="close-btn" id="closeModal">
+          &times;
+        </button>
+
+      </div>
+
+
+      <form id="taskForm">
+
+        <div class="form-group">
+
+          <label for="title">
+            Task Title
+          </label>
+
+          <input
+            type="text"
+            id="title"
+            placeholder="e.g. Build authentication API"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="description">
+            Description
+          </label>
+
+          <textarea
+            id="description"
+            placeholder="Describe the task..."
+            required
+          ></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="category">
+            Category
+          </label>
+
+          <select id="category">
+
+            <option value="Frontend">
+              Frontend
+            </option>
+
+            <option value="Backend">
+              Backend
+            </option>
+
+            <option value="Database">
+              Database
+            </option>
+
+            <option value="Testing">
+              Testing
+            </option>
+
+            <option value="Documentation">
+              Documentation
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="priority">
+            Priority
+          </label>
+
+          <select id="priority">
+
+            <option value="High">
+              High
+            </option>
+
+            <option value="Medium">
+              Medium
+            </option>
+
+            <option value="Low">
+              Low
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <button class="submit-btn" type="submit">
+          Create Task
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    let tasks = [
+      {
+        id: 1,
+        title: "Build Login API",
+        description: "Create authentication endpoint for the application.",
+        category: "Backend",
+        priority: "High",
+        completed: false,
+        createdAt: new Date("2026-09-28")
+      },
+
+      {
+        id: 2,
+        title: "Design Dashboard",
+        description: "Create the admin dashboard user interface.",
+        category: "Frontend",
+        priority: "Medium",
+        completed: true,
+        createdAt: new Date("2026-09-29")
+      },
+
+      {
+        id: 3,
+        title: "Create Database Schema",
+        description: "Design tables and relationships for the application.",
+        category: "Database",
+        priority: "High",
+        completed: false,
+        createdAt: new Date("2026-09-30")
+      },
+
+      {
+        id: 4,
+        title: "Write Documentation",
+        description: "Document the API endpoints and setup instructions.",
+        category: "Documentation",
+        priority: "Low",
+        completed: false,
+        createdAt: new Date("2026-10-01")
+      }
+    ];
+
+
+    function createIdGenerator() {
+
+      let id = 100;
+
+      return function() {
+
+        id++;
+
+        return id;
+
+      };
+
+    }
+
+    const generateId = createIdGenerator();
+
+
+    function createTask(title, description, category, priority) {
+
+      return {
+
+        id: generateId(),
+
+        title,
+
+        description,
+
+        category,
+
+        priority,
+
+        completed: false,
+
+        createdAt: new Date()
+
+      };
+
+    }
+
+
+    const taskList = document.getElementById("taskList");
+
+    const totalTasks = document.getElementById("totalTasks");
+
+    const completedTasks =
+      document.getElementById("completedTasks");
+
+    const pendingTasks =
+      document.getElementById("pendingTasks");
+
+    const highPriorityTasks =
+      document.getElementById("highPriorityTasks");
+
+    const progressText =
+      document.getElementById("progressText");
+
+    const progressFill =
+      document.getElementById("progressFill");
+
+    const searchInput =
+      document.getElementById("searchInput");
+
+    const sortSelect =
+      document.getElementById("sortSelect");
+
+    const taskCount =
+      document.getElementById("taskCount");
+
+    const taskModal =
+      document.getElementById("taskModal");
+
+    const taskForm =
+      document.getElementById("taskForm");
+
+    const themeBtn =
+      document.getElementById("themeBtn");
+
+
+    let currentFilter = "all";
+
+
+    function renderTasks() {
+
+      const searchTerm =
+        searchInput.value.toLowerCase().trim();
+
+
+      let visibleTasks = tasks
+
+        .filter(task => {
+
+          const matchesSearch =
+            task.title
+              .toLowerCase()
+              .includes(searchTerm) ||
+
+            task.description
+              .toLowerCase()
+              .includes(searchTerm);
+
+          return matchesSearch;
+
+        })
+
+        .filter(task => {
+
+          if (currentFilter === "all") {
+            return true;
+          }
+
+          if (currentFilter === "pending") {
+            return !task.completed;
+          }
+
+          if (currentFilter === "completed") {
+            return task.completed;
+          }
+
+          if (currentFilter === "high") {
+            return task.priority === "High";
+          }
+
+        });
+
+
+      visibleTasks.sort((a, b) => {
+
+        if (sortSelect.value === "title") {
+
+          return a.title.localeCompare(b.title);
+
+        }
+
+        if (sortSelect.value === "priority") {
+
+          const priority = {
+            High: 1,
+            Medium: 2,
+            Low: 3
+          };
+
+          return priority[a.priority] -
+                 priority[b.priority];
+
+        }
+
+        if (sortSelect.value === "oldest") {
+
+          return a.createdAt - b.createdAt;
+
+        }
+
+        return b.createdAt - a.createdAt;
+
+      });
+
+
+      taskCount.textContent =
+        `${visibleTasks.length} task${visibleTasks.length !== 1 ? "s" : ""}`;
+
+
+      if (visibleTasks.length === 0) {
+
+        taskList.innerHTML = `
+
+          <div class="empty">
+
+            <h3>No tasks found</h3>
+
+            <p>
+              Try changing your search or filter.
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      taskList.innerHTML = visibleTasks
+
+        .map(task => {
+
+          const priorityClass =
+            task.priority.toLowerCase();
+
+          return `
+
+            <article
+              class="task-card ${task.completed ? "completed" : ""}"
+            >
+
+              <div class="task-top">
+
+                <h3 class="task-title">
+                  ${task.title}
+                </h3>
+
+                <span class="badge ${priorityClass}">
+                  ${task.priority}
+                </span>
+
+              </div>
+
+
+              <p class="task-description">
+                ${task.description}
+              </p>
+
+
+              <div class="task-meta">
+
+                <span class="badge category">
+                  ${task.category}
+                </span>
+
+                <span class="badge">
+                  ${task.completed ? "Completed" : "Pending"}
+                </span>
+
+              </div>
+
+
+              <div class="task-actions">
+
+                <button
+                  class="action-btn complete-btn"
+                  onclick="toggleTask(${task.id})"
+                >
+                  ${task.completed ? "↩ Undo" : "✓ Complete"}
+                </button>
+
+
+                <button
+                  class="action-btn delete-btn"
+                  onclick="deleteTask(${task.id})"
+                >
+                  🗑 Delete
+                </button>
+
+              </div>
+
+            </article>
+
+          `;
+
+        })
+
+        .join("");
+
+    }
+
+
+    function updateStatistics() {
+
+      const completed =
+        tasks.reduce(
+
+          (total, task) => {
+
+            return total + (task.completed ? 1 : 0);
+
+          },
+
+          0
+
+        );
+
+
+      const total = tasks.length;
+
+      const pending = total - completed;
+
+
+      const highPriority =
+        tasks.filter(task =>
+          task.priority === "High"
+        ).length;
+
+
+      const taskTitles =
+        tasks.map(task => task.title);
+
+
+      console.log("Task titles:", taskTitles);
+
+
+      const hasUrgentTasks =
+        tasks.some(task =>
+          task.priority === "High" &&
+          !task.completed
+        );
+
+
+      console.log(
+        "Has urgent tasks:",
+        hasUrgentTasks
+      );
+
+
+      const allComplete =
+        tasks.length > 0 &&
+        tasks.every(task => task.completed);
+
+
+      console.log(
+        "All tasks complete:",
+        allComplete
+      );
+
+
+      const progress =
+        total === 0
+          ? 0
+          : Math.round((completed / total) * 100);
+
+
+      totalTasks.textContent = total;
+
+      completedTasks.textContent = completed;
+
+      pendingTasks.textContent = pending;
+
+      highPriorityTasks.textContent = highPriority;
+
+      progressText.textContent = `${progress}%`;
+
+      progressFill.style.width = `${progress}%`;
+
+    }
+
+
+    function toggleTask(id) {
+
+      const task =
+        tasks.find(task => task.id === id);
+
+
+      if (!task) {
+        return;
+      }
+
+
+      task.completed = !task.completed;
+
+
+      saveTasks();
+
+      renderTasks();
+
+      updateStatistics();
+
+    }
+
+
+    function deleteTask(id) {
+
+      const index =
+        tasks.findIndex(task => task.id === id);
+
+
+      if (index === -1) {
+        return;
+      }
+
+
+      const task =
+        tasks[index];
+
+
+      const confirmed =
+        confirm(`Delete "${task.title}"?`);
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      tasks.splice(index, 1);
+
+
+      saveTasks();
+
+      renderTasks();
+
+      updateStatistics();
+
+    }
+
+
+    taskForm.addEventListener("submit", event => {
+
+      event.preventDefault();
+
+
+      const title =
+        document.getElementById("title").value.trim();
+
+      const description =
+        document.getElementById("description").value.trim();
+
+      const category =
+        document.getElementById("category").value;
+
+      const priority =
+        document.getElementById("priority").value;
+
+
+      if (!title || !description) {
+        return;
+      }
+
+
+      const newTask =
+        createTask(
+          title,
+          description,
+          category,
+          priority
+        );
+
+
+      tasks = [
+        ...tasks,
+        newTask
+      ];
+
+
+      saveTasks();
+
+      renderTasks();
+
+      updateStatistics();
+
+
+      taskForm.reset();
+
+      closeModal();
+
+    });
+
+
+    const filterButtons =
+      document.querySelectorAll(".filter-btn");
+
+
+    filterButtons.forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        filterButtons.forEach(btn =>
+          btn.classList.remove("active")
+        );
+
+
+        button.classList.add("active");
+
+
+        currentFilter =
+          button.dataset.filter;
+
+
+        renderTasks();
+
+      });
+
+    });
+
+
+    searchInput.addEventListener(
+      "input",
+      renderTasks
+    );
+
+
+    sortSelect.addEventListener(
+      "change",
+      renderTasks
+    );
+
+
+    document
+      .getElementById("addTaskBtn")
+      .addEventListener("click", () => {
+
+        taskModal.classList.add("show");
+
+      });
+
+
+    function closeModal() {
+
+      taskModal.classList.remove("show");
+
+    }
+
+
+    document
+      .getElementById("closeModal")
+      .addEventListener(
+        "click",
+        closeModal
+      );
+
+
+    taskModal.addEventListener("click", event => {
+
+      if (event.target === taskModal) {
+
+        closeModal();
+
+      }
+
+    });
+
+
+    themeBtn.addEventListener("click", () => {
+
+      document.body.classList.toggle("dark");
+
+
+      const isDark =
+        document.body.classList.contains("dark");
+
+
+      themeBtn.textContent =
+        isDark
+          ? "☀️ Light Mode"
+          : "🌙 Dark Mode";
+
+    });
+
+
+    function saveTasks() {
+
+      localStorage.setItem(
+        "devTaskProTasks",
+        JSON.stringify(tasks)
+      );
+
+    }
+
+
+    function loadTasks() {
+
+      const savedTasks =
+        localStorage.getItem("devTaskProTasks");
+
+
+      if (!savedTasks) {
+        return;
+      }
+
+
+      const parsedTasks =
+        JSON.parse(savedTasks);
+
+
+      tasks = parsedTasks.map(task => ({
+
+        ...task,
+
+        createdAt: new Date(task.createdAt)
+
+      }));
+
+    }
+
+
+    loadTasks();
+
+    renderTasks();
+
+    updateStatistics();
+
+  </script>
+
+</body>
+</html>
