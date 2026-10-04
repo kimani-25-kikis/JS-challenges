@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Properties Demo</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+        }
+
+        #demo {
+            border: 2px solid black;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        #output {
+            background: #f4f4f4;
+            padding: 20px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>innerText vs textContent vs innerHTML</h1>
+
+    <div id="demo">
+        Hello
+        <strong>Joshua</strong>
+
+        <span class="hidden">
+            This message is hidden.
+        </span>
+    </div>
+
+    <button onclick="showInnerText()">innerText</button>
+    <button onclick="showTextContent()">textContent</button>
+    <button onclick="showInnerHTML()">innerHTML</button>
+
+    <h2>Result:</h2>
+
+    <div id="output"></div>
+
+    <script>
+
+        const demo = document.getElementById("demo");
+        const output = document.getElementById("output");
+
+        function showInnerText() {
+            output.textContent = demo.innerText;
+        }
+
+        function showTextContent() {
+            output.textContent = demo.textContent;
+        }
+
+        function showInnerHTML() {
+            output.textContent = demo.innerHTML;
+        }
+
+    </script>
+
+</body>
+</html>
