@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Switcher</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    body.theme-light {
+      background: #f1f5f9;
+      color: #172033;
+    }
+
+    body.theme-dark {
+      background: #111827;
+      color: #f9fafb;
+    }
+
+    body.theme-ocean {
+      background: #dff7fa;
+      color: #164e63;
+    }
+
+    .container {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .theme-card {
+      width: 100%;
+      max-width: 480px;
+      padding: 40px;
+      border-radius: 24px;
+      background: white;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    .theme-dark .theme-card {
+      background: #1f2937;
+    }
+
+    .theme-ocean .theme-card {
+      background: #f0fdff;
+    }
+
+    .icon {
+      font-size: 42px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      color: #6366f1;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 40px;
+      margin-bottom: 16px;
+    }
+
+    .description {
+      line-height: 1.7;
+      opacity: 0.75;
+      margin-bottom: 28px;
+    }
+
+    .theme-menu {
+      position: relative;
+    }
+
+    #theme-switcher-button {
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 12px;
+      background: #6366f1;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #theme-switcher-button:hover {
+      background: #4f46e5;
+    }
+
+    #theme-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 100%;
+      list-style: none;
+      padding: 8px;
+      border-radius: 12px;
+      background: white;
+      color: #172033;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+      text-align: left;
+      z-index: 10;
+    }
+
+    #theme-dropdown[hidden] {
+      display: none;
+    }
+
+    #theme-dropdown li {
+      padding: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #theme-dropdown li:hover {
+      background: #eef2ff;
+    }
+
+    #theme-message {
+      min-height: 50px;
+      margin-top: 24px;
+      line-height: 1.6;
+      opacity: 0.8;
+    }
+
+    .theme-preview {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #cbd5e1;
+    }
+
+    .preview-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    .light-dot {
+      background: #e2e8f0;
+      border: 1px solid #94a3b8;
+    }
+
+    .dark-dot {
+      background: #111827;
+    }
+
+    .ocean-dot {
+      background: #06b6d4;
+    }
+
+    .preview-label {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-left: 8px;
+    }
+
+    footer {
+      margin-top: 24px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+
+    @media (max-width: 500px) {
+      .theme-card {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+
+<body class="theme-light">
+
+  <main class="container">
+
+    <section class="theme-card">
+
+      <div class="icon" aria-hidden="true">✦</div>
+
+      <p class="eyebrow">VIBESPACE</p>
+
+      <h1>Choose your vibe.</h1>
+
+      <p class="description">
+        Pick a theme and change the atmosphere of your page.
+      </p>
+
+      <div class="theme-menu">
+
+        <button
+          id="theme-switcher-button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="theme-dropdown"
+        >Switch Theme</button>
+
+        <ul
+          id="theme-dropdown"
+          role="menu"
+          aria-labelledby="theme-switcher-button"
+          hidden
+        >
+          <li
+            id="theme-light"
+            role="menuitem"
+            tabindex="0"
+          >Light</li>
+
+          <li
+            id="theme-dark"
+            role="menuitem"
+            tabindex="0"
+          >Dark</li>
+
+          <li
+            id="theme-ocean"
+            role="menuitem"
+            tabindex="0"
+          >Ocean</li>
+        </ul>
+
+      </div>
+
+      <p
+        id="theme-message"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        Welcome! Enjoy the calm and clarity of the light theme.
+      </p>
+
+      <div class="theme-preview">
+        <span class="preview-dot light-dot"></span>
+        <span class="preview-dot dark-dot"></span>
+        <span class="preview-dot ocean-dot"></span>
+        <span class="preview-label">
+          Your space, your style.
+        </span>
+      </div>
+
+      <footer>
+        Change the theme. Change the mood.
+      </footer>
+
+    </section>
+
+  </main>
+
+  <script>
+    const themeButton = document.getElementById("theme-switcher-button");
+    const themeDropdown = document.getElementById("theme-dropdown");
+    const themeMessage = document.getElementById("theme-message");
+
+    const themeItems = document.querySelectorAll('[role="menuitem"]');
+
+    const themes = [
+      {
+        name: "light",
+        message: "Welcome! Enjoy the calm and clarity of the light theme."
+      },
+      {
+        name: "dark",
+        message: "Lights down, focus up. Welcome to the dark theme."
+      },
+      {
+        name: "ocean",
+        message: "Dive into a refreshing atmosphere with the ocean theme."
+      }
+    ];
+
+    themeButton.addEventListener("click", () => {
+
+      const isExpanded =
+        themeButton.getAttribute("aria-expanded") === "true";
+
+      if (isExpanded) {
+
+        themeDropdown.setAttribute("hidden", "");
+
+        themeButton.setAttribute("aria-expanded", "false");
+
+      } else {
+
+        themeDropdown.removeAttribute("hidden");
+
+        themeButton.setAttribute("aria-expanded", "true");
+
+      }
+
+    });
+
+    themeItems.forEach(item => {
+
+      item.addEventListener("click", () => {
+
+        const themeName = item.id.replace("theme-", "");
+
+        const selectedTheme = themes.find(
+          theme => theme.name === themeName
+        );
+
+        if (!selectedTheme) {
+          return;
+        }
+
+        themes.forEach(theme => {
+          document.body.classList.remove(
+            `theme-${theme.name}`
+          );
+        });
+
+        document.body.classList.add(
+          `theme-${selectedTheme.name}`
+        );
+
+        themeMessage.textContent =
+          selectedTheme.message;
+
+        themeDropdown.setAttribute("hidden", "");
+
+        themeButton.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+      });
+
+    });
+  </script>
+
+</body>
+</html>
