@@ -1,0 +1,17 @@
+<button id="toggle" aria-expanded="true" aria-controls="menu">
+  Menu
+</button>
+<ul id="menu" hidden>
+  <li><a href="/home">Home</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+<script>
+    const toggle = document.getElementById("toggle");
+    const menu = document.getElementById("menu")
+
+    toggle.addEventListener("click", ()=>{
+        const isOpen = toggle.getAttribute("aria-expanded")=== 'true';
+        toggle.setAttribute("aria-expanded" , String(!isOpen));
+        menu.hidden = isOpen
+    })
+</script>
