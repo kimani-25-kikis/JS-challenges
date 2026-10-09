@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accessible Tabs Demo</title>
+  <style>
+    :root {
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --border: #d9dde3;
+  --text: #1f2933;
+  --muted: #52606d;
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --focus: #f59e0b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 720px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+
+h1 { margin-bottom: 0.25rem; }
+.intro { color: var(--muted); margin-top: 0; }
+
+kbd {
+  background: #e4e7eb;
+  border: 1px solid #cbd2d9;
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 0 6px;
+  font-size: 0.85em;
+  font-family: ui-monospace, monospace;
+}
+
+/* Tabs container */
+.tabs {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* Tablist */
+.tablist {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--border);
+  background: #f1f3f6;
+  padding: 4px 4px 0;
+  flex-wrap: wrap;
+}
+
+.tablist [role="tab"] {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 0.75rem 1.1rem;
+  font: inherit;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.tablist [role="tab"]:hover {
+  background: #e6e9ee;
+  color: var(--text);
+}
+
+/* Selected tab (ARIA state drives the visual) */
+.tablist [role="tab"][aria-selected="true"] {
+  background: var(--surface);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+/* Focus visible for keyboard users */
+.tablist [role="tab"]:focus-visible,
+.panel:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Panels */
+.panel {
+  padding: 1.5rem;
+  background: var(--surface);
+  animation: fade 0.2s ease-out;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 1.15rem;
+}
+
+.panel label {
+  display: block;
+  margin: 0.75rem 0;
+  color: var(--muted);
+}
+
+.panel input[type="text"] {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+}
+
+.panel button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.55rem 1rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.panel button:hover { background: #1d4ed8; }
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Utility: hide visually but keep for screen readers */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Accessible Tabs with ARIA</h1>
+    <p class="intro">
+      Navigate tabs with <kbd>←</kbd> <kbd>→</kbd> arrow keys, or click them.
+      Screen readers will announce the selected tab and its panel.
+    </p>
+
+    <!-- Live region for announcements -->
+    <div
+      id="live-status"
+      class="visually-hidden"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <!-- TAB WIDGET -->
+    <div class="tabs">
+      <!-- Tab List -->
+      <div role="tablist" aria-label="Account settings" class="tablist">
+        <button
+          role="tab"
+          id="tab-profile"
+          aria-selected="true"
+          aria-controls="panel-profile"
+          tabindex="0"
+        >
+          Profile
+        </button>
+        <button
+          role="tab"
+          id="tab-notifications"
+          aria-selected="false"
+          aria-controls="panel-notifications"
+          tabindex="-1"
+        >
+          Notifications
+        </button>
+        <button
+          role="tab"
+          id="tab-security"
+          aria-selected="false"
+          aria-controls="panel-security"
+          tabindex="-1"
+        >
+          Security
+        </button>
+        <button
+          role="tab"
+          id="tab-billing"
+          aria-selected="false"
+          aria-controls="panel-billing"
+          tabindex="-1"
+        >
+          Billing
+        </button>
+      </div>
+
+      <!-- Panels -->
+      <div
+        role="tabpanel"
+        id="panel-profile"
+        aria-labelledby="tab-profile"
+        tabindex="0"
+        class="panel"
+      >
+        <h2>Profile</h2>
+        <p>Update your name, photo, and public bio here.</p>
+        <label>
+          Display name
+          <input type="text" value="Jane Doe" />
+        </label>
+      </div>
+
+      <div
+        role="tabpanel"
+        id="panel-notifications"
+        aria-labelledby="tab-notifications"
+        tabindex="0"
+        class="panel"
+        hidden
+      >
+        <h2>Notifications</h2>
+        <p>Choose what you want to be notified about.</p>
+        <label><input type="checkbox" checked /> Email me about updates</label><br />
+        <label><input type="checkbox" /> SMS alerts</label>
+      </div>
+
+      <div
+        role="tabpanel"
+        id="panel-security"
+        aria-labelledby="tab-security"
+        tabindex="0"
+        class="panel"
+        hidden
+      >
+        <h2>Security</h2>
+        <p>Manage passwords and two-factor authentication.</p>
+        <button type="button">Enable 2FA</button>
+      </div>
+
+      <div
+        role="tabpanel"
+        id="panel-billing"
+        aria-labelledby="tab-billing"
+        tabindex="0"
+        class="panel"
+        hidden
+      >
+        <h2>Billing</h2>
+        <p>View invoices and update your payment method.</p>
+        <button type="button">Download last invoice</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+  const tablist = document.querySelector('[role="tablist"]');
+  const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+  const panels = tabs.map(tab =>
+    document.getElementById(tab.getAttribute('aria-controls'))
+  );
+  const liveStatus = document.getElementById('live-status');
+
+  
+  function activateTab(index, { focus = true, announce = true } = {}) {
+    tabs.forEach((tab, i) => {
+      const selected = i === index;
+      tab.setAttribute('aria-selected', String(selected));
+      tab.setAttribute('tabindex', selected ? '0' : '-1');
+      panels[i].hidden = !selected;
+    });
+
+    if (focus) tabs[index].focus();
+
+    if (announce) {
+      
+      const tabName = tabs[index].textContent.trim();
+      liveStatus.textContent = `${tabName} tab selected`;
+    }
+  }
+
+  
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => activateTab(i));
+  });
+
+ 
+  tablist.addEventListener('keydown', (event) => {
+    const currentIndex = tabs.indexOf(document.activeElement);
+    if (currentIndex === -1) return;
+
+    let nextIndex = null;
+
+    switch (event.key) {
+      case 'ArrowRight':
+        nextIndex = (currentIndex + 1) % tabs.length;
+        break;
+      case 'ArrowLeft':
+        nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = tabs.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    activateTab(nextIndex);
+  });
+
+  
+  activateTab(0, { focus: false, announce: false });
+})();
+  </script>
+</body>
+</html>
