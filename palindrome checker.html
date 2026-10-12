@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palindrome Checker • modern twist</title>
+  <style>
+    /* ---------- global reset & personal style ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f7f9fc 0%, #e9eef4 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+      padding: 1.5rem;
+      margin: 0;
+    }
+
+    .palindrome-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 2.5rem;
+      padding: 2.5rem 2rem;
+      max-width: 580px;
+      width: 100%;
+      box-shadow: 0 30px 50px -20px rgba(0, 20, 30, 0.25),
+                  0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+      transition: transform 0.2s ease;
+    }
+
+    .palindrome-card:hover {
+      transform: scale(1.01);
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #1b2e3c;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 0.35rem;
+    }
+
+    h1 span {
+      background: #1b2e3c;
+      color: #f0f6fa;
+      font-size: 1.5rem;
+      width: 2.6rem;
+      height: 2.6rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      box-shadow: 0 8px 16px -8px rgba(0,0,0,0.3);
+    }
+
+    .subhead {
+      font-size: 0.95rem;
+      color: #4a5f6e;
+      margin-bottom: 2rem;
+      border-left: 4px solid #8ba9c0;
+      padding-left: 1rem;
+      font-weight: 400;
+    }
+
+    /* ---------- input & button group ---------- */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    #text-input {
+      width: 100%;
+      padding: 1.1rem 1.5rem;
+      font-size: 1.15rem;
+      border: 2px solid #d3dee8;
+      border-radius: 60px;
+      background: #ffffff;
+      outline: none;
+      transition: all 0.2s;
+      font-weight: 450;
+      color: #1b2e3c;
+      letter-spacing: 0.01em;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    #text-input:focus {
+      border-color: #4c7b9c;
+      box-shadow: 0 0 0 4px rgba(76, 123, 156, 0.15);
+    }
+
+    #text-input::placeholder {
+      color: #a4b7c4;
+      font-weight: 350;
+      font-style: italic;
+    }
+
+    #check-btn {
+      background: #1b2e3c;
+      border: none;
+      color: white;
+      font-size: 1.15rem;
+      font-weight: 600;
+      padding: 1rem 1.8rem;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      box-shadow: 0 12px 18px -8px rgba(20, 40, 60, 0.3);
+      letter-spacing: 0.3px;
+    }
+
+    #check-btn:hover {
+      background: #23465c;
+      transform: translateY(-2px);
+      box-shadow: 0 18px 24px -10px rgba(20, 40, 60, 0.4);
+    }
+
+    #check-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 6px 12px -6px rgba(20, 40, 60, 0.4);
+    }
+
+    /* ---------- result box — div with id "result" ---------- */
+    #result {
+      background: #eef4f9;
+      padding: 1.5rem 1.8rem;
+      border-radius: 2rem;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: #122b38;
+      min-height: 5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      word-break: break-word;
+      transition: all 0.2s ease;
+      border: 1px solid #d3e2ec;
+      box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.8), 0 6px 12px -8px rgba(0,0,0,0.1);
+      line-height: 1.5;
+    }
+
+    #result.highlight {
+      background: #d9e6f0;
+      border-color: #8ba9c0;
+    }
+
+    /* small decorative footer */
+    .footnote {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #7c93a3;
+      letter-spacing: 0.3px;
+    }
+
+    /* optional responsive spacing */
+    @media (max-width: 480px) {
+      .palindrome-card {
+        padding: 1.8rem 1.2rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      #result {
+        font-size: 1.1rem;
+        padding: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="palindrome-card">
+    <h1>
+      <span>⇄</span> Palindrome
+    </h1>
+    <div class="subhead">
+      ignore case, punctuation &amp; spacing
+    </div>
+
+    <!-- required elements: input #text-input, button #check-btn, div #result -->
+    <div class="input-group">
+      <input type="text" id="text-input" placeholder="e.g. A man, a plan, a canal. Panama" autocomplete="off" aria-label="Enter text to check for palindrome">
+      <button id="check-btn">Check palindrome</button>
+    </div>
+
+    <div id="result" role="status" aria-live="polite">
+      Your result will appear here
+    </div>
+    <div class="footnote">
+      ✦ palindrome checker ✦
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      // ----- DOM references (required ids) -----
+      const textInput = document.getElementById('text-input');
+      const checkBtn = document.getElementById('check-btn');
+      const resultDiv = document.getElementById('result');
+
+      // ----- helper: clean string (remove non-alphanumeric, lowercase) -----
+      function cleanString(str) {
+        // remove all characters that are not a-z, A-Z, 0-9
+        return str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+      }
+
+      // ----- core palindrome check -----
+      function isPalindrome(originalStr) {
+        const cleaned = cleanString(originalStr);
+        // if cleaned is empty (e.g., only punctuation) we consider it a palindrome?
+        // but the spec only checks when input has value; we handle empty alert separately.
+        // for safety, if cleaned empty -> true (a string of zero characters reads same forwards/backwards)
+        // but tests with empty input never reach here (alert instead). fine.
+        if (cleaned.length === 0) return true;
+        const reversed = cleaned.split('').reverse().join('');
+        return cleaned === reversed;
+      }
+
+      // ----- update result message -----
+      function updateResult(originalInput, palindromeFlag) {
+        // preserve original input including spaces, punctuation, case
+        const trimmedInput = originalInput;   // we keep the exact string from input field
+        let message = '';
+        if (palindromeFlag) {
+          message = `${trimmedInput} is a palindrome.`;
+        } else {
+          message = `${trimmedInput} is not a palindrome.`;
+        }
+        resultDiv.textContent = message;
+        resultDiv.classList.add('highlight');
+        // remove highlight after a short delay (optional, but adds a subtle effect)
+        setTimeout(() => {
+          resultDiv.classList.remove('highlight');
+        }, 400);
+      }
+
+      // ----- main handler for button click -----
+      function handleCheck() {
+        const rawValue = textInput.value;   // get current value
+
+        // 1) if input is empty (or only whitespace? but spec says "without entering a value" -> empty)
+        //    Using trim to treat spaces as empty? Spec says "without entering a value" – we consider
+        //    that if input.value is empty string or only whitespace? But test "race car" has spaces.
+        //    Typically the test case: input field is empty -> alert. However if user enters spaces,
+        //    it's not an empty value? The spec says "without entering a value" – we'll use trim to be safe:
+        //    but the tests likely check empty string; but there is a test with "1 eye for of 1 eye." etc.
+        //    If we use trim() and someone enters spaces only, we would alert. That's probably fine.
+        //    But to be precise with the spec "without entering a value", we treat empty after trim? 
+        //    The example test: "When you click on the #check-btn element without entering a value into the #text-input element"
+        //    That means the input field is empty string. We'll use `rawValue.trim() === ''`? But if someone
+        //    enters only spaces, that's effectively no value? We'll follow spec strictly: `rawValue === ''` or
+        //    `rawValue.trim() === ''`? I'll use trim to avoid space-only false positives.
+        //    However the test "0_0 (: /-\ :) 0-0" has spaces and symbols — not empty. So safe.
+        if (rawValue.trim() === '') {
+          alert('Please input a value');
+          return;
+        }
+
+        // 2) check palindrome using cleaned version
+        const palindrome = isPalindrome(rawValue);  // rawValue preserved for message
+
+        // 3) update result element
+        updateResult(rawValue, palindrome);
+      }
+
+      // ----- attach event listener to button -----
+      checkBtn.addEventListener('click', handleCheck);
+
+      // optional: pressing Enter in input triggers same as click (improves UX)
+      textInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();   // avoid any form submission
+          handleCheck();
+        }
+      });
+
+      // ----- ensure that result element starts with a neutral message -----
+      // (already has textContent "Your result will appear here")
+      // no need to change, but we can set empty? The tests only check after click.
+      // but the provided test expects the result to contain something after click.
+      // we keep as is, it will be replaced on click.
+      // For a cleaner start, we could set to "Awaiting input..." but not necessary.
+      // However, after page load, if someone clicks without input, alert and no change.
+      // That's fine.
+
+      // extra: handle cases where the input contains only punctuation and digits? 
+      // cleanString handles it; e.g., "0_0 (: /-\ :) 0-0" cleans to "0000" which is palindrome.
+      // test case passes.
+
+      // for robustness, we also ensure that if cleaned string is empty but rawValue is not empty
+      // (e.g., input is "!!!"), we consider it a palindrome? 
+      // The spec says ignoring punctuation and spaces, so a string of only punctuation becomes empty.
+      // But is an empty string a palindrome? Usually yes (reads same forward/backward). 
+      // The test doesn't cover that, but we treat as palindrome if cleaned empty and raw not empty.
+      // That's consistent with our isPalindrome returning true for empty cleaned.
+      // However, we must not alert because rawValue isn't empty.
+      // Works.
+
+      // Edge: The test "five|\_/|four" — our cleanString removes backslash, underscores, pipes,
+      // but keeps letters: "fivefour"? Let's check: original "five|\_/|four"
+      // characters: f,i,v,e,|,\,_,/,|,f,o,u,r  -> remove non-alnum: f,i,v,e,f,o,u,r => "fivefour"
+      // reversed "ruofevif" -> not same. So "not a palindrome". Correct.
+    })();
+  </script>
+</body>
+</html>
