@@ -1,0 +1,199 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeatLab - Drum Machine</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background: #111827;
+      color: #f9fafb;
+    }
+
+    #drum-machine {
+      width: 100%;
+      max-width: 560px;
+      padding: 32px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px #0006;
+    }
+
+    .heading {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .heading h1 {
+      margin: 0 0 8px;
+      color: #34d399;
+      font-size: 2.2rem;
+    }
+
+    .heading p {
+      margin: 0;
+      color: #9ca3af;
+    }
+
+    #display {
+      min-height: 56px;
+      margin: 0 0 24px;
+      padding: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #030712;
+      color: #34d399;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    #pad-bank {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .drum-pad {
+      min-height: 100px;
+      border: 2px solid #4b5563;
+      border-radius: 16px;
+      background: #374151;
+      color: #f9fafb;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s, border-color 0.15s;
+      box-shadow: 0 5px 0 #111827;
+    }
+
+    .drum-pad:hover,
+    .drum-pad:focus-visible {
+      background: #065f46;
+      border-color: #34d399;
+      outline: none;
+    }
+
+    .drum-pad:active,
+    .drum-pad.active {
+      background: #10b981;
+      border-color: #6ee7b7;
+      color: #052e16;
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #111827;
+    }
+
+    .hint {
+      margin: 26px 0 0;
+      color: #9ca3af;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    @media (max-width: 420px) {
+      #drum-machine {
+        padding: 20px;
+      }
+
+      .drum-pad {
+        min-height: 78px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="drum-machine">
+    <div class="heading">
+      <h1>BeatLab</h1>
+      <p>Tap a pad. Find your rhythm.</p>
+    </div>
+
+    <p id="display" aria-live="polite">Ready to make some noise</p>
+
+    <div id="pad-bank">
+      <button class="drum-pad" id="heater-1" type="button" data-sound="Heater 1">Q
+        <audio class="clip" id="Q" src="https://cdn.freecodecamp.org/curriculum/drum/Heater-1.mp3"></audio>
+      </button>
+      <button class="drum-pad" id="heater-2" type="button" data-sound="Heater 2">W
+        <audio class="clip" id="W" src="https://cdn.freecodecamp.org/curriculum/drum/Heater-2.mp3"></audio>
+      </button>
+      <button class="drum-pad" id="heater-3" type="button" data-sound="Heater 3">E
+        <audio class="clip" id="E" src="https://cdn.freecodecamp.org/curriculum/drum/Heater-3.mp3"></audio>
+      </button>
+      <button class="drum-pad" id="heater-4" type="button" data-sound="Heater 4">A
+        <audio class="clip" id="A" src="https://cdn.freecodecamp.org/curriculum/drum/Heater-4_1.mp3"></audio>
+      </button>
+      <button class="drum-pad" id="clap" type="button" data-sound="Clap">S
+        <audio class="clip" id="S" src="https://cdn.freecodecamp.org/curriculum/drum/Heater-6.mp3"></audio>
+      </button>
+      <button class="drum-pad" id="open-hh" type="button" data-sound="Open Hi-Hat">D
+        <audio class="clip" id="D" src="https://cdn.freecodecamp.org/curriculum/drum/Dsc_Oh.mp3"></audio>
+      </button>
+      <button class="drum-pad" id="kick-n-hat" type="button" data-sound="Kick and Hat">Z
+        <audio class="clip" id="Z" src="https://cdn.freecodecamp.org/curriculum/drum/Kick_n_Hat.mp3"></audio>
+      </button>
+      <button class="drum-pad" id="kick" type="button" data-sound="Kick">X
+        <audio class="clip" id="X" src="https://cdn.freecodecamp.org/curriculum/drum/RP4_KICK_1.mp3"></audio>
+      </button>
+      <button class="drum-pad" id="closed-hh" type="button" data-sound="Closed Hi-Hat">C
+        <audio class="clip" id="C" src="https://cdn.freecodecamp.org/curriculum/drum/Cev_H2.mp3"></audio>
+      </button>
+    </div>
+
+    <p class="hint">KEYBOARD SHORTCUTS: Q W E · A S D · Z X C</p>
+  </div>
+
+  <script>
+    const drumPads = document.querySelectorAll(".drum-pad");
+    const display = document.getElementById("display");
+
+    function playDrum(pad) {
+      const audio = pad.querySelector(".clip");
+
+      audio.currentTime = 0;
+      audio.play();
+
+      display.textContent = pad.dataset.sound;
+
+      pad.classList.add("active");
+      setTimeout(() => {
+        pad.classList.remove("active");
+      }, 120);
+    }
+
+    drumPads.forEach((pad) => {
+      pad.addEventListener("click", () => {
+        playDrum(pad);
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.repeat) return;
+
+      const key = event.key.toUpperCase();
+      const audio = document.getElementById(key);
+
+      if (!audio) return;
+
+      const pad = audio.closest(".drum-pad");
+      if (pad) playDrum(pad);
+    });
+  </script>
+</body>
+</html>
+```
