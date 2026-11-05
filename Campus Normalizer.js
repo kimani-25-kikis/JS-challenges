@@ -58,6 +58,7 @@ const rawData = {
   },
 };
 
+
 function normalizeDirectory(rawData) {
   const departmentsById = {};
   const programsById = {};
@@ -67,6 +68,7 @@ function normalizeDirectory(rawData) {
   const departmentEntries = Object.entries(rawData);
 
   for (let i = 0; i < departmentEntries.length; i++) {
+
     const [departmentName, departmentData] = departmentEntries[i];
 
     const departmentId = departmentData.Dept_code || `dept-${i + 1}`;
@@ -87,7 +89,6 @@ function normalizeDirectory(rawData) {
       };
 
       departmentsById[departmentId].programIds.push(program.id);
-
       for (let k = 0; k < program.instructors.length; k++) {
         const instructor = program.instructors[k];
 
@@ -104,11 +105,86 @@ function normalizeDirectory(rawData) {
     }
   }
 
-  return { departmentsById, programsById, instructorsById, instructorsByEmail };
+  return {
+    departmentsById,
+    programsById,
+    instructorsById,
+    instructorsByEmail,
+  };
 }
 
 const normalizedData = normalizeDirectory(rawData);
 
+
 function getInstructorByEmail(email, normalizedData) {
-  return null;
+  const instructorId = normalizedData.instructorsByEmail[email];
+
+  if (!instructorId) {
+    return "Instructor not found";
+  }
+
+  const instructor = normalizedData.instructorsById[instructorId];
+  const department = normalizedData.departmentsById[instructor.departmentId];
+
+  return {
+    name: instructor.name ?? "Unknown Instructor",
+    officeHours: instructor.officeHours ?? "Not Available",
+    department: department.name ?? "Unknown Department",
+  };
 }
+
+
+function listRoomsByBuilding(buildingCode, normalizedData) {
+
+  const programValues = Object.values(normalizedData.programsById);
+  const rooms = [];
+
+  for (let i = 0; i < programValues.length; i++) {
+    const program = programValues[i];
+    const department = normalizedData.departmentsById[program.departmentId];
+
+    if (department.code === buildingCode && program.room != null) {
+      rooms.push(program.room);
+    }
+  }
+
+  rooms.sort();
+  return rooms;
+}
+
+
+function renderDirectorySummary(normalizedData) {
+  const departments = Object.keys(normalizedData.departmentsById).length;
+  const programs = Object.keys(normalizedData.programsById).length;
+  const instructors = Object.keys(normalizedData.instructorsById).length;
+
+  const instructorValues = Object.values(normalizedData.instructorsById);
+  let missingOfficeHours = 0;
+
+  for (let i = 0; i < instructorValues.length; i++) {
+    if (instructorValues[i].officeHours == null) {
+      missingOfficeHours++;
+    }
+  }
+
+  const programValues = Object.values(normalizedData.programsById);
+  let programsWithoutRooms = 0;
+
+  for (let i = 0; i < programValues.length; i++) {
+    if (programValues[i].room === null) {
+      programsWithoutRooms++;
+    }
+  }
+
+  return `
+Campus Directory Summary
+------------------------
+Departments: ${departments}
+Programs: ${programs}
+Instructors: ${instructors}
+Missing Office Hours: ${missingOfficeHours}
+Programs Without Rooms: ${programsWithoutRooms}
+`;
+}
+
+console.log(renderDirectorySummary(normalizedData));
