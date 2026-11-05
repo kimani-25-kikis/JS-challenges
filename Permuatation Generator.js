@@ -12,3 +12,9 @@ function permuteString(str, prefix = "", results = []) {
 
   return [...new Set(results)];
 }
+
+// For reversing astring:
+// function changeString(str) {
+//   if (str === "") return "";
+//   return changeString(str.slice(1)) + str[0];
+// }
